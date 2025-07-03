@@ -12,12 +12,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class ShopServiceImplTest {
 
+    @AfterEach
+    public void clearStorage() {
+        Storage.STORAGE.clear();
+    }
+
     @Test
-    public void serviceProcessOk() {
+    public void service_process_ok() {
         List<FruitTransaction> transactions = new ArrayList<>();
         transactions.add(new FruitTransaction(FruitTransaction.Operation.BALANCE, "banana", 20));
         transactions.add(new FruitTransaction(FruitTransaction.Operation.BALANCE, "apple", 100));
@@ -29,6 +35,7 @@ public class ShopServiceImplTest {
         operationHandlers.put(FruitTransaction.Operation.PURCHASE, new PurchaseOperation());
         operationHandlers.put(FruitTransaction.Operation.RETURN, new ReturnOperation());
         operationHandlers.put(FruitTransaction.Operation.SUPPLY, new SupplyOperation());
+
         OperationStrategy strategy = new OperationStrategyImpl(operationHandlers);
         ShopService service = new ShopServiceImpl(strategy);
         service.process(transactions);
@@ -39,6 +46,6 @@ public class ShopServiceImplTest {
         expected.put("banana", 7);
         expected.put("apple", 110);
 
-        assertEquals(actual, expected);
+        assertEquals(expected, actual);
     }
 }

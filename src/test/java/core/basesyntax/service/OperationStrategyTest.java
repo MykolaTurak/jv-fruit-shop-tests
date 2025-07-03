@@ -1,27 +1,45 @@
 package core.basesyntax.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import core.basesyntax.service.operations.BalanceOperation;
 import core.basesyntax.service.operations.OperationHandler;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class OperationStrategyTest {
+    private static OperationStrategy strategy;
 
-    @Test
-    public void getOperationHandler() {
+    @BeforeAll
+    static void setUp() {
         Map<FruitTransaction.Operation, OperationHandler> operationHandlers = new HashMap<>();
         operationHandlers.put(FruitTransaction.Operation.BALANCE, new BalanceOperation());
-        OperationStrategy strategy = new OperationStrategyImpl(operationHandlers);
+        strategy = new OperationStrategyImpl(operationHandlers);
+    }
 
-        Class<? extends OperationHandler> actual = strategy.getOperationHandler(
-                new FruitTransaction(FruitTransaction.Operation.BALANCE,
-                "banana", 20)).getClass();
+    @Test
+    public void get_operation_handler_ok() {
+        FruitTransaction transaction = new FruitTransaction(
+                FruitTransaction.Operation.BALANCE, "banana", 20);
 
-        Class<? extends OperationHandler> expected = new BalanceOperation().getClass();
+        Class<? extends OperationHandler> actual = strategy.getOperationHandler(transaction)
+                .getClass();
+        Class<? extends OperationHandler> expected = BalanceOperation.class;
 
-        assertEquals(actual, expected);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void get_operation_handler_invalid_should_throw_exception() {
+        FruitTransaction transaction = new FruitTransaction(
+                FruitTransaction.Operation.SUPPLY, "apple", 100);
+
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> strategy.getOperationHandler(transaction));
+
+        assertEquals("Operation handler for SUPPLY not found", exception.getMessage());
     }
 }

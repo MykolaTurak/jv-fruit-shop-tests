@@ -3,8 +3,6 @@ package core.basesyntax.infrastructure;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import core.basesyntax.infrastructure.db.FileReader;
-import core.basesyntax.infrastructure.db.FileReaderImpl;
 import core.basesyntax.service.FruitTransaction;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +10,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class DataConverterImplTest {
-    private static final String PATH = "src/main/resources/operationslist.csv";
     private static DataConverter converter;
 
     @BeforeAll
@@ -21,7 +18,7 @@ public class DataConverterImplTest {
     }
 
     @Test
-    public void convertToTransactionOk() {
+    public void convert_to_transaction_ok() {
         List<FruitTransaction> expected = new ArrayList<>();
         expected.add(new FruitTransaction(FruitTransaction.Operation.BALANCE, "banana", 20));
         expected.add(new FruitTransaction(FruitTransaction.Operation.BALANCE, "apple", 100));
@@ -32,33 +29,41 @@ public class DataConverterImplTest {
         expected.add(new FruitTransaction(FruitTransaction.Operation.PURCHASE, "banana", 5));
         expected.add(new FruitTransaction(FruitTransaction.Operation.SUPPLY, "banana", 50));
 
-        FileReader reader = new FileReaderImpl();
-        List<String> read = reader.read(PATH);
-        DataConverter converter = new DataConverterImpl();
-        List<FruitTransaction> actual = converter.convertToTransaction(read);
+        List<String> input = List.of(
+                "b,banana,20",
+                "b,apple,100",
+                "s,banana,100",
+                "p,banana,13",
+                "r,apple,10",
+                "p,apple,20",
+                "p,banana,5",
+                "s,banana,50"
+        );
+
+        List<FruitTransaction> actual = converter.convertToTransaction(input);
 
         assertEquals(expected, actual);
     }
 
     @Test
-    public void getNotIntegerValueToDataConverterNotOk() {
+    public void not_integer_value_should_throw_exception() {
         List<String> list = new ArrayList<>();
         list.add("p,banana,wrong");
-        DataConverter dataConverter = new DataConverterImpl();
+
         RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> dataConverter.convertToTransaction(list));
+                () -> converter.convertToTransaction(list));
 
         assertEquals("Invalid number format: 'wrong'. Expected an integer value.",
                 exception.getMessage());
     }
 
     @Test
-    public void getLessThanZeroValueToDataConverterNotOk() {
+    public void negative_value_should_throw_exception() {
         List<String> list = new ArrayList<>();
         list.add("p,banana,-10");
-        DataConverter dataConverter = new DataConverterImpl();
+
         RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> dataConverter.convertToTransaction(list));
+                () -> converter.convertToTransaction(list));
 
         assertEquals("Error! Number can't be less than zero", exception.getMessage());
     }

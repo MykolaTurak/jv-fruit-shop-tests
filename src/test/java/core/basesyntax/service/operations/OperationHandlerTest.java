@@ -6,17 +6,27 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import core.basesyntax.infrastructure.db.Storage;
 import core.basesyntax.service.FruitTransaction;
 import java.util.NoSuchElementException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class OperationHandlerTest {
+
+    @AfterEach
+    public void clearStorage() {
+        Storage.STORAGE.clear();
+    }
+
     @Test
-    public void noSuchFruitNotOk() {
-        Storage.STORAGE.remove("apple");
-        OperationHandler pushareOperation = new ReturnOperation();
-        RuntimeException exeption = assertThrows(NoSuchElementException.class,
-                () -> pushareOperation.run(
+    public void no_such_fruit_should_throw_exception() {
+        // Гарантуємо, що fruit "apple" відсутній
+        Storage.STORAGE.clear();
+
+        OperationHandler returnOperation = new ReturnOperation();
+
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class,
+                () -> returnOperation.run(
                         new FruitTransaction(FruitTransaction.Operation.RETURN, "apple", 10)));
 
-        assertEquals("Can't find fruit: apple", exeption.getMessage());
+        assertEquals("Can't find fruit: apple", exception.getMessage());
     }
 }
