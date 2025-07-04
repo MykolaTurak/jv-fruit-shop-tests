@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class FileReaderImplTest {
-    private static final String PATH = "src/main/resources/database.csv";
+    private static final String PATH = "src/test/resources/database.csv";
     private static final String INCORRECT_PATH = "/incorrect/path";
     private static final String EMPTY_FILE_PATH = "src/test/resources/empty-file.csv";
     private static FileReader reader;
