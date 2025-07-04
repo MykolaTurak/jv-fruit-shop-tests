@@ -15,12 +15,10 @@ public class FileWriterImplTest {
     private static final String TEST_PATH = "src/test/resources/test-database.csv";
     private static final String INCORRECT_PATH = "/incorrect/path";
     private static FileWriter fileWriter;
-    private static FileReader fileReader;
 
     @BeforeAll
     static void setUp() {
         fileWriter = new FileWriterImpl();
-        fileReader = new FileReaderImpl();
     }
 
     @AfterEach
@@ -29,11 +27,11 @@ public class FileWriterImplTest {
     }
 
     @Test
-    public void write_into_file_ok() {
+    public void write_into_file_ok() throws IOException {
         String content = "expected message";
         fileWriter.write(content, TEST_PATH);
 
-        List<String> actual = fileReader.read(TEST_PATH);
+        List<String> actual = Files.readAllLines(Path.of(TEST_PATH));
         List<String> expected = List.of("expected message");
 
         assertEquals(expected, actual);

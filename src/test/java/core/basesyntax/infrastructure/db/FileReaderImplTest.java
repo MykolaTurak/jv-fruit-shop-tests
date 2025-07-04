@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 public class FileReaderImplTest {
     private static final String PATH = "src/main/resources/database.csv";
     private static final String INCORRECT_PATH = "/incorrect/path";
+    private static final String EMPTY_FILE_PATH = "src/test/resources/empty-file.csv";
     private static FileReader reader;
 
     @BeforeAll
@@ -37,4 +38,17 @@ public class FileReaderImplTest {
                 () -> reader.read(INCORRECT_PATH));
         assertEquals("Can't read from file", exception.getMessage());
     }
+
+    @Test
+    public void read_empty_file_ok() throws IOException {
+        Path emptyFilePath = Path.of(EMPTY_FILE_PATH);
+        Files.writeString(emptyFilePath, "");
+
+        List<String> result = reader.read(emptyFilePath.toString());
+
+        assertEquals(List.of(), result);
+
+        Files.deleteIfExists(emptyFilePath);
+    }
+
 }

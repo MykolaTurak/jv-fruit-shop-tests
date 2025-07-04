@@ -17,8 +17,7 @@ public class OperationHandlerTest {
     }
 
     @Test
-    public void no_such_fruit_should_throw_exception() {
-        // Гарантуємо, що fruit "apple" відсутній
+    public void no_such_fruit_not_ok() {
         Storage.STORAGE.clear();
 
         OperationHandler returnOperation = new ReturnOperation();
