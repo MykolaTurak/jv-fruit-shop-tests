@@ -17,7 +17,6 @@ public class ReportGeneratorImplTest {
 
     @Test
     public void get_report_ok() {
-        // Наповнюємо Storage напряму
         Map<String, Integer> testData = new HashMap<>();
         testData.put("banana", 7);
         testData.put("apple", 110);

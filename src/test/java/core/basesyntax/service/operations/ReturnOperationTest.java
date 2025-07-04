@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import core.basesyntax.infrastructure.db.Storage;
 import core.basesyntax.service.FruitTransaction;
-import core.basesyntax.service.ReportGenerator;
-import core.basesyntax.service.ReportGeneratorImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,11 +24,9 @@ public class ReturnOperationTest {
         returnOperation.run(new FruitTransaction(
                 FruitTransaction.Operation.RETURN, "banana", 20));
 
-        ReportGenerator reportGenerator = new ReportGeneratorImpl();
-        String actual = reportGenerator.getReport();
+        Integer actualQuantity = Storage.STORAGE.get("banana");
+        Integer expectedQuantity = 40;
 
-        String expected = "banana,40";
-
-        assertEquals(expected, actual);
+        assertEquals(expectedQuantity, actualQuantity);
     }
 }
